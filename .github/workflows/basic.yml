@@ -45,10 +45,6 @@ jobs:
         key: sbt-${{ hashFiles('**/build.sbt') }}
     - name: Build the docker-compose stack
       run: docker-compose up -d
-    - name: Sleep for Docker
-      uses: jakejarvis/wait-action@master
-      with:
-        time: '20s'
     - name: Check formatting
       if: startsWith(matrix.scala, '2.13.2') && (matrix.java == 'adopt@1.8')
       run: sbt ++$SCALA_VERSION scalafmtCheckAll
