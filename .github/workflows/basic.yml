@@ -3,31 +3,61 @@
 name: CI
 
 # Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [push, pull_request]
+
+env:
+  CI: true
+  SCALA_VERSION: 2.13.2
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
   build:
+    name: Scala ${{ matrix.scala }}, Java ${{ matrix.java }}
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [adopt@1.8, adopt@1.11, adopt@1.14]
+        scala: [2.13.2]
+    env:
+      SCALA_VERSION: ${{ matrix.scala }}
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    - uses: olafurpg/setup-scala@v7
+      with:
+        java-version: ${{ matrix.java }}
+    - name: Cache Coursier
+      uses: actions/cache@v1
+      with:
+        path: ~/.cache/coursier
+        key: sbt-coursier-cache
+    - name: Cache SBT
+      uses: actions/cache@v1
+      with:
+        path: ~/.sbt
+        key: sbt-${{ hashFiles('**/build.sbt') }}
+    - name: Build the docker-compose stack
+      run: docker-compose up -d
+    - name: Sleep for Docker
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '20s'
 
-    # Runs a single command using the runners shell
-    - name: Run a one-line script
-      run: echo Hello, world!
-
-    # Runs a set of commands using the runners shell
-    - name: Run a multi-line script
-      run: |
-        echo Add other actions to build,
-        echo test, and deploy your project.
+    - name: Check formatting
+      if: startsWith(matrix.scala, '2.13.2') && (matrix.java == 'adopt@1.8')
+      run: sbt ++$SCALA_VERSION scalafmtCheckAll
+      - name: Compile
+        run: sbt ++$SCALA_VERSION test:compile
+      - name: Check compatibility
+        run: sbt ++$SCALA_VERSION mimaReportBinaryIssues
+      - name: Check unused dependencies
+        run: sbt ++$SCALA_VERSION unusedCompileDependenciesTest
+      - name: Test
+        run: sbt ++$SCALA_VERSION test

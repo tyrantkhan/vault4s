@@ -25,10 +25,10 @@ services:
   vault:
     image: vault:latest
     volumes:
-      - ./vault/config:/vault/config
-      - ./vault/policies:/vault/policies
-      - ./vault/data:/vault/data
-      - ./vault/backend/file:/vault/file:rw
+      - ./config/vault/config:/vault/config
+      - ./config/vault/policies:/vault/policies
+      - ./config/vault/data:/vault/data
+      - ./config/vault/backend/file:/vault/file:rw
     ports:
       - 8200:8200
     environment:
