@@ -1,4 +1,4 @@
-scalaVersion := "2.13.3" // Also supports 2.11.x and 2.12.x
+scalaVersion := "2.13.6" // Also supports 2.11.x and 2.12.x
 
 val http4sVersion = "1.0.0-M3"
 val specsVersion = "4.10.0"
@@ -10,7 +10,7 @@ lazy val root = (project in file("."))
     organization := "com.onekhan",
     name := "vault4s",
     version := "0.1.0",
-    scalaVersion := "2.13.3",
+    scalaVersion := "2.13.6",
     libraryDependencies ++= Seq(
       "org.http4s" %% "http4s-core" % http4sVersion,
       "org.http4s" %% "http4s-client" % http4sVersion,
