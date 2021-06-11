@@ -15,18 +15,19 @@ lazy val root = (project in file("."))
       "org.http4s" %% "http4s-core" % http4sVersion,
       "org.http4s" %% "http4s-client" % http4sVersion,
       "org.http4s" %% "http4s-circe" % http4sVersion,
-      "io.circe"  %% "circe-generic" % CirceVersion,
+      "io.circe" %% "circe-generic" % CirceVersion,
       "io.circe" %% "circe-generic-extras" % CirceGenericExtrasVersion,
       "org.specs2" %% "specs2-core" % specsVersion % "test"
     ),
-    addCompilerPlugin("org.typelevel" %% "kind-projector"     % "0.10.3"),
-    addCompilerPlugin("com.olegpy"    %% "better-monadic-for" % "0.3.1"),
+    addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.10.3"),
+    addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
     mimaPreviousArtifacts := Set.empty
   )
 
 scalacOptions ++= Seq(
   "-deprecation",
-  "-encoding", "UTF-8",
+  "-encoding",
+  "UTF-8",
   "-language:higherKinds",
   "-language:postfixOps",
   "-feature",
